@@ -1,0 +1,75 @@
+#! / usr / bin / env python
+# pylint: disable = C0116, W0613
+# Este programa é dedicado ao domínio público sob a licença CC0.
+
+"" "
+Bot simples para responder às mensagens do Telegram.
+Primeiro, algumas funções do manipulador são definidas. Então, essas funções são passadas para
+pelo Despachante e registrados em seus respectivos locais.
+Em seguida, o bot é iniciado e executado até pressionar Ctrl-C na linha de comando.
+Uso:
+Exemplo básico do Echobot, repete mensagens.
+Pressione Ctrl-C na linha de comando ou envie um sinal ao processo para interromper o
+robô.
+"" "
+
+ registro de importação
+
+da  atualização de importação de telegrama  , ForceReply 
+do  telegrama . ext  import  Updater , CommandHandler , MessageHandler , Filters , CallbackContext
+
+# Habilitar registro
+registro . basicConfig (
+    format = '% (asctime) s -% (name) s -% (levelname) s -% (message) s' , level = logging . INFO
+)
+
+logger  =  registro . getLogger ( __name__ )
+
+
+# Defina alguns manipuladores de comando. Estes geralmente levam os dois argumentos update e
+# contexto.
+def  start ( update : Update , context : CallbackContext ) ->  Nenhum :
+    "" "Envie uma mensagem quando o comando / start for emitido." ""
+    usuário  =  atualização . usuário_eficaz
+    atualização . mensagem . reply_markdown_v2 (
+        fr'Hi { usuário . ention_markdown_v2 () } \! ' ,
+        reply_markup = ForceReply ( seletivo = True ),
+    )
+
+
+def  help_command ( update : Update , context : CallbackContext ) ->  Nenhum :
+    "" "Envie uma mensagem quando o comando / ajuda for emitido." ""
+    atualização . mensagem . reply_text ( 'Ajuda!' )
+
+
+def  echo ( update : Update , context : CallbackContext ) ->  None :
+    "" "Ecoar a mensagem do usuário." ""
+    atualização . mensagem . reply_text ( atualizar . mensagem . texto )
+
+
+def  main () ->  Nenhum :
+    "" "Inicie o bot." ""
+    # Crie o Updater e passe a ele o token do seu bot.
+    updater  =  Updater ( "TOKEN" )
+
+    # Faça com que o despachante registre manipuladores
+    despachante  =  atualizador . expedidor
+
+    # em comandos diferentes - responder no telegrama
+    despachante . add_handler ( CommandHandler ( "start" , start ))
+    despachante . add_handler ( CommandHandler ( "help" , help_command ))
+
+    # no não comando, ou seja, mensagem - ecoa a mensagem no telegrama
+    despachante . add_handler ( MessageHandler ( Filters . text  &  ~ Filters . command , echo ))
+
+    # Inicie o bot
+    atualizador . start_polling ()
+
+    # Execute o bot até pressionar Ctrl-C ou o processo recebe SIGINT,
+    # SIGTERM ou SIGABRT. Isso deve ser usado na maioria das vezes, uma vez que
+    # start_polling () não bloqueia e irá parar o bot normalmente.
+    atualizador . inativo ()
+
+
+if  __name__  ==  '__main__' :
+    principal ()
